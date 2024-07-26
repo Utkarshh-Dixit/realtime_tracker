@@ -15,12 +15,12 @@ app.use(express.static(path.join(__dirname, "public")));
 
 io.on("connection", function (socket) {
   socket.on("send-location", function (coords) {
-    io.emit(
-      "location-message",
-      `https://google.com/maps?q=${coords.latitude},${coords.longitude}`
-    );
+    io.emit("receive-location", { id: socket.id, ...coords });
   });
-  console.log("New user connected");
+
+  socket.on("disconnect", function () {
+    io.emit("user-disconnected", socket.id);
+  });
 });
 
 app.get("/", function (req, res) {
